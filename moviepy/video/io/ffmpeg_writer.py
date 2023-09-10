@@ -99,9 +99,11 @@ class FFMPEG_VideoWriter:
             pixel_format = "rgba" if with_mask else "rgb24"
 
         # order is important
-        cmd = [
-            FFMPEG_BINARY,
-            "-y",
+        cmd = [FFMPEG_BINARY]
+        if ffmpeg_params_before is not None:
+            cmd.extend(ffmpeg_params_before)
+        cmd.extend([
+           "-y",
             "-loglevel",
             "error" if logfile == sp.PIPE else "info",
             "-f",
@@ -117,7 +119,7 @@ class FFMPEG_VideoWriter:
             "-an",
             "-i",
             "-",
-        ]
+        ])
         if audiofile is not None:
             cmd.extend(["-i", audiofile, "-acodec", "copy"])
         cmd.extend(["-vcodec", codec, "-preset", preset])
@@ -228,6 +230,7 @@ def ffmpeg_write_video(
     ffmpeg_params=None,
     logger="bar",
     pixel_format=None,
+    ffmpeg_params_before=None
 ):
     """Write the clip to a videofile. See VideoClip.write_videofile for details
     on the parameters.
@@ -253,6 +256,7 @@ def ffmpeg_write_video(
         threads=threads,
         ffmpeg_params=ffmpeg_params,
         pixel_format=pixel_format,
+        ffmpeg_params_before=ffmpeg_params_before,
     ) as writer:
         for t, frame in clip.iter_frames(
             logger=logger, with_times=True, fps=fps, dtype="uint8"
