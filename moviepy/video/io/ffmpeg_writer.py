@@ -88,6 +88,7 @@ class FFMPEG_VideoWriter:
         threads=None,
         ffmpeg_params=None,
         pixel_format=None,
+        ffmpeg_params_before=None,
     ):
         if logfile is None:
             logfile = sp.PIPE
